@@ -45,8 +45,11 @@ class _CalculatorState extends State<Calculator> {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Align(
                       alignment: Alignment.bottomRight,
-                      child: Text(calculator.output,
-                          style: TextStyle(fontSize: 60)),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Text(calculator.output,
+                            maxLines: 1, style: TextStyle(fontSize: 60)),
+                      ),
                     ),
                   ),
                 ),
@@ -71,6 +74,10 @@ class Keyboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color buttonColor =
+        SchedulerBinding.instance!.window.platformBrightness == Brightness.dark
+            ? Colors.white
+            : Colors.black;
     return Container(
       height: MediaQuery.of(context).size.height * 0.65,
       child: Column(
@@ -79,14 +86,17 @@ class Keyboard extends StatelessWidget {
             Button(
                 text: "AC",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "+/-",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "%",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "÷",
@@ -99,14 +109,17 @@ class Keyboard extends StatelessWidget {
             Button(
                 text: "7",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "8",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "9",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "x",
@@ -119,14 +132,17 @@ class Keyboard extends StatelessWidget {
             Button(
                 text: "4",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "5",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "6",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "－",
@@ -139,14 +155,17 @@ class Keyboard extends StatelessWidget {
             Button(
                 text: "1",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "2",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "3",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "＋",
@@ -159,11 +178,13 @@ class Keyboard extends StatelessWidget {
             Button(
                 text: "0",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 flex: 2,
                 notifyParent: notifyParent),
             Button(
                 text: ".",
                 calculatorController: calculator,
+                textColor: buttonColor,
                 notifyParent: notifyParent),
             Button(
                 text: "＝",
@@ -232,7 +253,7 @@ class _ButtonState extends State<Button> {
               BoxShadow(
                   color: SchedulerBinding.instance!.window.platformBrightness ==
                           Brightness.dark
-                      ? Colors.black.withAlpha(70)
+                      ? Colors.black.withAlpha(50)
                       : Colors.grey.shade300,
                   spreadRadius: 2.0,
                   blurRadius: 3.0,
@@ -240,11 +261,11 @@ class _ButtonState extends State<Button> {
               BoxShadow(
                   color: SchedulerBinding.instance!.window.platformBrightness ==
                           Brightness.dark
-                      ? Colors.black.withAlpha(10)
-                      : Colors.grey.shade400,
+                      ? Colors.black.withAlpha(5)
+                      : Colors.grey.shade200,
                   spreadRadius: 2.0,
                   blurRadius: 3.0 / 2,
-                  offset: Offset(clicked ? -3.0 : -3.0, clicked ? -3.0 : -3.0)),
+                  offset: Offset(-3.0, -3.0)),
             ],
           ),
           child: GestureDetector(
@@ -268,8 +289,9 @@ class _ButtonState extends State<Button> {
                   fit: BoxFit.fitWidth,
                   child: Text(
                     widget.text,
+                    maxLines: 1,
                     style: TextStyle(fontSize: 30, color: widget.textColor),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.right,
                   ),
                 ),
               ),
