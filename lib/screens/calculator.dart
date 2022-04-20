@@ -37,19 +37,33 @@ class _CalculatorState extends State<Calculator> {
             : Color(0xFFeeeeee),
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Column(
               children: [
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Text(calculator.output,
-                            maxLines: 1, style: TextStyle(fontSize: 60)),
-                      ),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Text(calculator.inputString,
+                                maxLines: 1, style: TextStyle(fontSize: 30)),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Text(calculator.output,
+                                  maxLines: 1, style: TextStyle(fontSize: 60)),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

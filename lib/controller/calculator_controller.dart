@@ -1,129 +1,102 @@
+import '../stack.dart';
+
 class CalculatorController {
-  // store results to be printed
-  String output = '0';
+  // top horizontal inputs
+  String inputString = '';
+  String output = "";
+  String lastNumber = "";
 
-  // store calculation result
-  String _output = '';
+  bool isDigit(String s, int idx) => (s.codeUnitAt(idx) ^ 0x30) <= 9;
 
-  // store  output value when the arithmetic operator is pressed
-  dynamic num1 = 0;
-
-  // store output value when the equal operator is pressed
-  dynamic num2 = 0;
-
-  //store  operator when operator button is pressed
-  String operator = '';
-
-  //store  operation result below output text
-  String resultOperationText = '';
-
-  //determine percentage button state
-  bool isPressedPercentageButton = true;
-
-  String buttonPressed(String buttonText) {
+  buttonPressed(String buttonText) {
     if (buttonText == 'AC') {
-      _output = '';
-      num1 = 0;
-      num2 = 0;
-      operator = '';
-      output = '0';
-      resultOperationText = '';
-      isPressedPercentageButton = true;
-
-      return output;
-    } else if (buttonText == '+/-') {
-      isPressedPercentageButton = true;
-
-      if (_output.contains("-", 0)) {
-        print("Already conatains a minus");
-        _output = _output + '';
-        output = _output;
-        resultOperationText = output;
-      } else {
-        _output = '-' + _output;
-        output = _output;
-        resultOperationText = output;
-      }
-
-      return output;
-    } else if (buttonText == '%') {
-      if (isPressedPercentageButton) {
-        if (output.contains('.')) {
-          num1 = double.parse(output);
-        } else {
-          num1 = int.parse(output);
-        }
-
-        _output = (num1 / 100).toString();
-        output = _output;
-        _output = '';
-        num1 = 0;
-        resultOperationText = output;
-        return output;
-      }
+      inputString = '';
+      lastNumber = "";
+      output = "0";
     } else if (buttonText == "＋" ||
         buttonText == "－" ||
         buttonText == "÷" ||
         buttonText == "x") {
-      if (output.contains('.')) {
-        num1 = double.parse(output);
-      } else {
-        num1 = int.parse(output);
+      if (lastNumber.isEmpty) {
+        inputString = inputString.substring(0, inputString.length - 1);
       }
-
-      operator = buttonText;
-      resultOperationText = operator;
-      isPressedPercentageButton = false;
-      print(operator);
-      _output = "";
-    } else if (buttonText == ".") {
-      if (_output.contains(".")) {
-        print("Already conatains a decimals");
-        _output = _output + '';
-        output = _output;
-        resultOperationText = output;
-      } else {
-        _output = _output + buttonText;
-        output = _output;
-        resultOperationText = output;
-      }
+      inputString += buttonText;
+      lastNumber = "";
+    } else if (buttonText == '%') {
+    } else if (buttonText == '+/-') {
     } else if (buttonText == "＝") {
-      isPressedPercentageButton = true;
-      if (output.contains('.')) {
-        num2 = double.parse(output);
-      } else {
-        num2 = int.parse(output);
-      }
-
-      if (operator == "＋") {
-        _output = (num1 + num2).toString();
-      }
-      if (operator == "－") {
-        _output = (num1 - num2).toString();
-      }
-      if (operator == "x") {
-        _output = (num1 * num2).toString();
-      }
-      if (operator == "÷") {
-        _output = (num1 / num2).toString();
-      }
-
-      num1 = 0;
-      num2 = 0;
-      operator = "";
-      if (_output.contains('.')) {
-        output = double.parse(_output).toStringAsFixed(2);
-      } else {
-        output = _output;
-      }
-      resultOperationText = '';
-      _output = '';
+      output = calculate(inputString);
+    } else if (buttonText == "." &&
+        (inputString.endsWith(".") || lastNumber.isEmpty)) {
     } else {
-      _output = _output + buttonText;
-      output = _output;
-      resultOperationText = resultOperationText + buttonText;
+      inputString += buttonText;
+      lastNumber = buttonText;
     }
-    print(_output);
-    return output;
+  }
+
+  calculate(String exp) {
+    Stack<String> ops = Stack();
+    Stack<double> values = Stack();
+
+    for (int i = 0; i < exp.length; i++) {
+      if (isDigit(exp, i)) {
+        String val = "";
+
+        while (i < exp.length && (isDigit(exp, i) || exp[i] == ".")) {
+          val += exp[i];
+          i++;
+        }
+        i--;
+        values.push(double.parse(val));
+        print('val = $val');
+      } else {
+        while (ops.isNotEmpty && precedence(ops.peek) >= precedence(exp[i])) {
+          double val2 = values.pop();
+          double val1 = values.pop();
+          String operator = ops.pop();
+          values.push(applyOperator(val1, val2, operator));
+        }
+
+        ops.push(exp[i]);
+      }
+    }
+
+    while (ops.isNotEmpty) {
+      double val2 = values.pop();
+      double val1 = values.pop();
+      String operator = ops.pop();
+      values.push(applyOperator(val1, val2, operator));
+    }
+
+    return values.pop().toString();
+  }
+
+  int precedence(String op) {
+    if (op == '＋' || op == '－')
+      return 1;
+    else if (op == 'x' || op == '÷') return 2;
+
+    return 0;
+  }
+
+  applyOperator(double a, double b, String op) {
+    switch (op) {
+      case '＋':
+        {
+          return a + b;
+        }
+      case '－':
+        {
+          return a - b;
+        }
+      case 'x':
+        {
+          return a * b;
+        }
+      case '÷':
+        {
+          return a ~/ b;
+        }
+    }
   }
 }
